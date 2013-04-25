@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Web.Mvc;
 using MvcApplication2.Indexes;
 using MvcApplication2.Models;
@@ -8,6 +9,8 @@ namespace MvcApplication2.Controllers
 {
     public class HomeController : Controller
     {
+        public static readonly Random Random = new Random();
+
         public ActionResult Index(int? skip = 0, bool lazy = false)
         {
             ViewBag.Message = "Modify this template to jump-start your ASP.NET MVC application.";
@@ -27,10 +30,11 @@ namespace MvcApplication2.Controllers
                                .AsProjection<Persons_Search.SearchResult>()
                                .Lazily();
 
-                var user = Db.Advanced.Lazily.Load<Person>("person/1");
+                var user = Db.Advanced.Lazily.Load<Person>(string.Format("person/{0}", Random.Next(0, 149999)));
 
                 var first = Db.Query<Persons_Search.SearchResult, Persons_Search>()
                               .OrderBy(x => x.Id)
+                              .Skip(skip.Value)
                               .As<Person>()
                               .Lazily();
 
@@ -51,10 +55,11 @@ namespace MvcApplication2.Controllers
                                .AsProjection<Persons_Search.SearchResult>()
                                .ToList();
 
-                var user = Db.Load<Person>("person/1");
+                var user = Db.Load<Person>(string.Format("person/{0}", Random.Next(0, 149999)));
 
                 var first = Db.Query<Persons_Search.SearchResult, Persons_Search>()
                               .OrderBy(x => x.Id)
+                              .Skip(skip.Value)
                               .As<Person>()
                               .FirstOrDefault();
             }
